@@ -1,0 +1,29 @@
+{
+  "name": "pshell",
+  "version": "0.0.1",
+  "description": "Provides a simple Promise-based interface for running shell commands",
+  "author": "Max Jung <max@gourmetjs.com>",
+  "license": "MIT",
+  "repository": "https://github.com/asyncmax/pshell",
+  "keywords": [
+    "shell",
+    "promise",
+    "command",
+    "command line",
+    "aws cli",
+    "cli"
+  ],
+  "main": "lib/index.js",
+  "scripts": {
+    "lint": "eslint lib/**/*.js test/**/*.js",
+    "tape": "tape test/*.js",
+    "test": "npm run lint && npm run tape"
+  },
+  "dependencies": {
+    "object-assign": "^4.1.0"
+  },
+  "devDependencies": {
+    "eslint": "^3.5.0",
+    "tape": "^4.6.0"
+  }
+}
