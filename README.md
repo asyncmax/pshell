@@ -2,9 +2,7 @@
 
 Provides a simple Promise-based interface for running shell commands.
 
-# How to use
-
-> Basic usage
+# Basic usage
 
 ```js
 var shell = require("pshell");
@@ -19,6 +17,16 @@ shell("node --version").then(res => {
  exit code: 0
 ******************************/
 ```
+
+# Why?
+
+Writing a shell script in JavaScript is:
+
+- Easier than bash script to most developers.
+- More portable (don't let Windows users behind).
+- More powerful in managing child processes in asynchronous way.
+
+# More details
 
 > Don't echo the commands.
 
@@ -76,7 +84,7 @@ Promise.all([
 > You can get a pre-configured version of `shell` function by calling the `context` API. This is a good way to avoid modifying the global options. Other `pshell` users in the same process won't be affected.
 
 ```js
-var shell = require("pshell").context({echoCommand: false, captureOutput: false});
+var shell = require("pshell").context({echoCommand: false, captureOutput: true});
 
 Promise.all([
   shell("node --version"),
@@ -91,6 +99,58 @@ Promise.all([
  NPM version: 3.10.6
 ******************************/
 ```
+
+> A non-zero exit code rejects the promise by default.
+
+```js
+var shell = require("pshell").context({echoCommand: false});
+
+shell("node -e 'process.exit(1)'").then(res => {
+  console.log("exit code:", res.code);
+}).catch(err => {
+  console.error("error occurred:", err);
+});
+
+/****** console output *******
+ error occurred: [Error: Process 26546 exited with code 1]
+******************************/
+```
+
+> Set `ignoreError` to `true` if you want to get the promise resolved instead.
+
+```js
+var shell = require("pshell").context({echoCommand: false, ignoreError: true});
+
+shell("node -e 'process.exit(1)'").then(res => {
+  console.log("exit code:", res.code);
+}).catch(err => {
+  console.error("error occurred:", err);
+});
+
+/****** console output *******
+ exit code: 1
+******************************/
+```
+
+# API
+
+### shell(command[, options])
+
+Executes the `command` string using the system's default shell (`'/bin/sh'` on Unix, `'cmd.exe'` on Windows). An optional `options` object can be given to override the base options for this session.
+
+Returns a promise that will be resolved with the [result object](#result-object) when the command execution completes.
+
+### shell.exec(command[, options])
+
+Same as `shell()` but returns an object `{childProcess, promise}` instead of a promise. You can access underlying [`ChildProcess`](https://nodejs.org/api/child_process.html#child_process_class_childprocess) object for advanced manipulation of a child process.
+
+# Options
+
+Options
+
+# Result object
+
+Result
 
 # License
 
