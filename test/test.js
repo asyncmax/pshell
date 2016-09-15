@@ -147,9 +147,7 @@ test("env option", function(t) {
 });
 
 test("Promise option", function(t) {
-  function P(func) {
-    return new Promise(func);
-  };
+  var P = require("es6-promise").Promise;
 
   var promise = shell("echo hello", {Promise: P, captureOutput: true});
 
