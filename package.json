@@ -1,6 +1,6 @@
 {
   "name": "pshell",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Provides a simple Promise-based interface for running shell commands",
   "author": "Max Jung <max@gourmetjs.com>",
   "license": "MIT",
