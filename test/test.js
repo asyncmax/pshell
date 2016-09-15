@@ -69,7 +69,7 @@ test("error exit rejection", function(t) {
 
 test("ignoreError option", function(t) {
   shell(ERROR, {ignoreError: true}).then(function(res) {
-    t.equal(res.code, 1234);
+    t.equal(res.code, 33);
   }).then(t.end, t.end);
 });
 
@@ -107,7 +107,7 @@ test("shell.context", function(t) {
     t.ok(!res.stderr);
     return sh(ERROR);
   }).then(function(res) {
-    t.equal(res.code, 1234);
+    t.equal(res.code, 33);
   }).then(t.end, t.end);
 });
 
