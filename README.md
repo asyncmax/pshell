@@ -105,10 +105,11 @@ Promise.all([
 ```js
 var shell = require("pshell").context({echoCommand: false});
 
-shell("node -e 'process.exit(1)'").then(res => {
+// Using double quotes here is intentional. Windows shell supports double quotes only.
+shell('node -e "process.exit(1)"').then(res => {
   console.log("exit code:", res.code);
 }).catch(err => {
-  console.error("error occurred:", err);
+  console.error("error occurred:", err.message);
 });
 
 /****** console output *******
@@ -121,10 +122,11 @@ shell("node -e 'process.exit(1)'").then(res => {
 ```js
 var shell = require("pshell").context({echoCommand: false, ignoreError: true});
 
-shell("node -e 'process.exit(1)'").then(res => {
+// Using double quotes here is intentional. Windows shell supports double quotes only.
+shell('node -e "process.exit(1)"').then(res => {
   console.log("exit code:", res.code);
 }).catch(err => {
-  console.error("error occurred:", err);
+  console.error("error occurred:", err.message);
 });
 
 /****** console output *******
@@ -136,13 +138,21 @@ shell("node -e 'process.exit(1)'").then(res => {
 
 ### shell(command[, options])
 
-Executes the `command` string using the system's default shell (`'/bin/sh'` on Unix, `'cmd.exe'` on Windows). An optional `options` object can be given to override the base options for this session.
+Executes the `command` string using the system's default shell (`"/bin/sh"` on Unix, `"cmd.exe"` on Windows). An optional `options` object can be given to override the base options for this session.
 
 Returns a promise that will be resolved with the [result object](#result-object) when the command execution completes.
 
 ### shell.exec(command[, options])
 
-Same as `shell()` but returns an object `{childProcess, promise}` instead of a promise. You can access underlying [`ChildProcess`](https://nodejs.org/api/child_process.html#child_process_class_childprocess) object for advanced manipulation of a child process.
+Same as `shell()` but returns an object `{childProcess, promise}` instead of a promise. Primary reason that you might want to use this function instead of `shell()` is probably to access the underlying [`ChildProcess`](https://nodejs.org/api/child_process.html#child_process_class_childprocess) object for an advanced use case. However, keep in mind that the child process object represents the system shell process, not the command process.
+
+Calling `shell(cmd, opts)` is same as calling `shell.exec(cmd, opts).promise`.
+
+### shell.spawn(exec[, args[, options]])
+
+Executes a child process specified in `exec` directly without the system shell layer. `args` is an array of string arguments to be given to the process. Returns an object `{childProcess, promise}`.
+
+This is the underlying base method for implementing `shell()` and `shell.exec()`.
 
 # Options
 
