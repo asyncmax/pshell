@@ -237,7 +237,7 @@ In addition to the proprietary options above, the following options of [`child_p
 - cwd
 - env
 - arg0
-- stdio (if specified, `captureOutput` and `captureError` options are ignored)
+- stdio (if specified, `inputContent`, `captureOutput` and `captureError` options are ignored)
 - detached
 - uid
 - gid
