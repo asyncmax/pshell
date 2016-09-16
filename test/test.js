@@ -157,3 +157,25 @@ test("Promise option", function(t) {
     t.equal(res.stdout, "hello\n");
   }).then(t.end, t.end);
 });
+
+test("echoCommand handler", function(t) {
+  var history = [];
+  var sh = shell.context({
+    echoCommand: function(exec, args) {
+      history.push([exec, args]);
+      return false;
+    }
+  });
+
+  var ret = sh.spawn("some-exec", ["--help"]);
+
+  t.equal(ret.childProcess, null);
+
+  t.deepEqual(history, [
+    ["some-exec", ["--help"]]
+  ]);
+
+  ret.promise.then(function(res) {
+    t.equal(res, null);
+  }).then(t.end, t.end);
+});
