@@ -187,7 +187,7 @@ A `Promise` constructor to use instead of the system default one.
 
 ### options.echoCommand (default: `true`)
 
-If truthy, prints the command string to the console. If you specify a function, it gets called like `func(exec, args)` with `this` set to the options object.
+If truthy, prints the command string to the console. If you specify a function, it gets called like `func(exec, args)` with `this` set to the options object. If you return `false` from the function, the command is not executed. `childProcess` and the result object of the promise are `null` in this case.
 
 ### options.ignoreError (default: `false`)
 
