@@ -23,7 +23,7 @@ shell("node --version").then(res => {
 Writing a shell script in JavaScript is:
 
 - Easier than bash script to most developers.
-- More portable (don't let Windows users behind).
+- More portable (don't leave Windows users behind).
 - More powerful in managing child processes in asynchronous way.
 
 # More details
