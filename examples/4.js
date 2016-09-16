@@ -11,3 +11,7 @@ Promise.all([
   process.stdout.write("NPM version: " + res[1].stdout);
 });
 
+/****** console output *******
+ Node version: v4.5.0
+ NPM version: 3.10.6
+******************************/

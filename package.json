@@ -15,7 +15,7 @@
   ],
   "main": "lib/index.js",
   "scripts": {
-    "lint": "eslint lib/**/*.js test/**/*.js",
+    "lint": "eslint lib/*.js test/**/*.js examples/*.js",
     "tape": "tape test/*.js",
     "test": "npm run lint && npm run tape"
   },

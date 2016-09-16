@@ -1,0 +1,15 @@
+{
+ "parserOptions": {
+    "ecmaVersion": 6
+  },
+  "env": {
+    "node": true
+  },
+  "rules": {
+    "indent": ["error", 2],
+    "no-undef": ["error"],
+    "quotes": ["error", "double", {"avoidEscape": true}],
+    "semi": ["error", "always"],
+    "strict": ["error", "never"]
+  }
+}

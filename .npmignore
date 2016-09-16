@@ -3,3 +3,4 @@
 .gitattributes
 node_modules
 examples
+test

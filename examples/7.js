@@ -5,3 +5,7 @@ shell('node -e "process.exit(1)"').then(res => {
 }).catch(err => {
   console.error("error occurred:", err.message);
 });
+
+/****** console output *******
+ exit code: 1
+******************************/

@@ -59,7 +59,7 @@ shell("node --version", {echoCommand: false, captureOutput: true}).then(res => {
 ******************************/
 ```
 
-> Configure the global options so you don't need to specify the same options everytime.
+> Configure the global options so you don't need to specify the same options every time.
 
 ```js
 var shell = require("pshell");
@@ -142,25 +142,127 @@ Executes the `command` string using the system's default shell (`"/bin/sh"` on U
 
 Returns a promise that will be resolved with the [result object](#result-object) when the command execution completes.
 
-### shell.exec(command[, options])
+### shell.options
 
-Same as `shell()` but returns an object `{childProcess, promise}` instead of a promise. Primary reason that you might want to use this function instead of `shell()` is probably to access the underlying [`ChildProcess`](https://nodejs.org/api/child_process.html#child_process_class_childprocess) object for an advanced use case. However, keep in mind that the child process object represents the system shell process, not the command process.
+An object represents the base options to be applied to every session executed from this context. You can modify fields of this object to change the default behavior.
 
-Calling `shell(cmd, opts)` is same as calling `shell.exec(cmd, opts).promise`.
+### shell.context([options])
+
+Creates a new `shell()` function that is pre-configured with the specified options (combined with the current base options).
 
 ### shell.spawn(exec[, args[, options]])
 
-Executes a child process specified in `exec` directly without the system shell layer. `args` is an array of string arguments to be given to the process. Returns an object `{childProcess, promise}`.
+Executes a child process specified in `exec` directly without the system shell layer. `args` is an array of string arguments to be given to the process. Returns an object `{childProcess, promise}`. See [`ChildProcess`](https://nodejs.org/api/child_process.html#child_process_class_childprocess) for more details about Node's underlying child process object.
 
-This is the underlying base method for implementing `shell()` and `shell.exec()`.
+This is the base method for implementing `shell()` and `shell.exec()`.
+
+```js
+var shell = require("pshell").context({echoCommand: false});
+
+var ret = shell.spawn("node", ["--version"], {captureOutput: true});
+
+console.log("Node process ID:", ret.childProcess.pid);
+
+ret.promise.then(function(res) {
+  console.log("stdout:", JSON.stringify(res.stdout));
+});
+
+/****** console output *******
+ Node process ID: 16372
+ stdout: "v4.5.0\n"
+******************************/
+```
+
+### shell.exec(command[, options])
+
+Same as `shell()` but returns an object `{childProcess, promise}` instead of a promise. Primary reason that you might want to use this function instead of `shell()` is probably to access the child process object for advanced use cases. However, keep in mind that the child process object returned by this method represents the system shell process, not the command process.
+
+Calling `shell(cmd, opts)` is same as calling `shell.exec(cmd, opts).promise`.
 
 # Options
 
-Options
+### options.Promise (default: `null`)
+
+A `Promise` constructor to use instead of the system default one.
+
+### options.echoCommand (default: `true`)
+
+If truthy, prints the command string to the console. If you specify a function, it gets called like `func(exec, args)` with `this` set to the options object.
+
+### options.ignoreError (default: `false`)
+
+If truthy, a non-zero exit code doesn't reject the promise so you can continue to the next steps.
+
+### options.captureOutput (default: `false`)
+
+If truthy, `stdout` of the child process is captured as a string in `res.stdout`. If falsy, it is printed to the parent's `stdout`. If you specify a function, it gets called like `func(buf)` with `this` set to the options object. `buf` is an instance of `Buffer` containing the captured content. The return value from this function is set to `res.stdout`.
+
+You can use a function for advanced use cases such as handling custom character encoding or parsing JSON.
+
+```js
+var shell = require("pshell");
+
+shell('node -e "console.log(JSON.stringify({a:1,b:2}))"', {
+  echoCommand: false,
+  captureOutput: function(buf) {
+    return JSON.parse(buf.toString());
+  }
+}).then(function(res) {
+  console.log("type:", typeof res.stdout);
+  console.log("data:", res.stdout);
+});
+
+/****** console output *******
+ type: object
+ data: { a: 1, b: 2 }
+******************************/
+```
+
+### options.captureError (default: `false`)
+
+If truthy, 'stderr' of the child process captured as a string in `res.stderr`. You can specify a function as in `captureOutput` options.
+
+### options.normalizeText (default: `true`)
+
+If truthy, the end of line characters in a captured string are normalized to `"\n"`. Only used when capturing to a string is enabled (by `options.captureOutput` and/or `options.captureError`).
+
+### options.inputContent (default: `null`)
+
+You can specify a string or an instance of `Buffer` to supply the input data to `stdin` of the child process.
 
 # Result object
 
-Result
+This objects is given as a value when the promise returned by one of execution functions is resolved.
+
+### res.code (number)
+
+The exit code of child process.
+
+### res.stdout (string or any)
+
+The captured `stdout` of child process. This field exists only when `options.captureOutput` is truthy. This is a string value by default but you can override its behavior with your own custom handler. 
+
+### res.stderr (string or any)
+
+The captured `stderr` of child process. This field exists only when `options.captureError` is truthy. This is a string value by default but you can override its behavior with your own custom handler. 
+
+# Develop & contribute
+
+## Setup
+
+```sh
+git clone https://github.com/asyncmax/pshell
+cd pshell
+npm install
+npm run lint  # run lint
+npm test      # run test
+```
+
+## Coding style
+
+- Use two spaces for indentation.
+- Use double quotes for strings.
+- Use ES5 syntax for lib & test.
 
 # License
 
