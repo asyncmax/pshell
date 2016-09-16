@@ -230,6 +230,18 @@ If truthy, the end of line characters in a captured string are normalized to `"\
 
 You can specify a string or an instance of `Buffer` to supply the input data to `stdin` of the child process.
 
+### Node's `child_process.spawn()` options
+
+In addition to the proprietary options above, the following options of [`child_process.spawn()`](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options) also work.
+
+- cwd
+- env
+- arg0
+- stdio (if specified, `captureOutput` and `captureError` options are ignored)
+- detached
+- uid
+- gid
+
 # Result object
 
 This objects is given as a value when the promise returned by one of execution functions is resolved.
