@@ -1,4 +1,5 @@
 .DS_Store
+*.log
 .eslintrc*
 .gitattributes
 node_modules

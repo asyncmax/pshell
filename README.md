@@ -195,9 +195,7 @@ If truthy, a non-zero exit code doesn't reject the promise so you can continue t
 
 ### options.captureOutput (default: `false`)
 
-If truthy, `stdout` of the child process is captured as a string in `res.stdout`. If falsy, it is printed to the parent's `stdout`. If you specify a function, it gets called like `func(buf)` with `this` set to the options object. `buf` is an instance of `Buffer` containing the captured content. The return value from this function is set to `res.stdout`.
-
-You can use a function for advanced use cases such as handling custom character encoding or parsing JSON.
+If truthy, `stdout` of the child process is captured as a string in `res.stdout`. If falsy, it is printed to the parent's `stdout`. If you specify a function, it gets called like `func(buf)` with `this` set to the options object. `buf` is an instance of `Buffer` containing the captured content. The return value from this function is set to `res.stdout`. You can use this feature for advanced use cases such as handling custom character encoding or parsing JSON.
 
 ```js
 var shell = require("pshell");
