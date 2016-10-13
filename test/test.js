@@ -179,3 +179,11 @@ test("echoCommand handler", function(t) {
     t.equal(res, null);
   }).then(t.end, t.end);
 });
+
+test("shell.env", function(t) {
+  var env = shell.env({
+    PATH: ["MY_TEST_PATH", process.env.PATH]
+  });
+  t.equal(env.PATH.split(npath.delimiter)[0], "MY_TEST_PATH");
+  t.end();
+});
