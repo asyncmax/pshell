@@ -181,21 +181,9 @@ Calling `shell(cmd, opts)` is same as calling `shell.exec(cmd, opts).promise`.
 
 ### shell.env(def)
 
-Gets an object containing environment variables from `process.env` plus `def`. This can be used to create the `options.env` object in platform independent way.
+Gets an object containing key-value pairs of environment variables combined with `process.env`. This is a low level function that can be used to construct an object for `options.rawEnv`.
 
-```js
-var shell = require("pshell");
-
-shell("tape **/*.js", {
-  env: shell.env({
-    PATH: ["node_modules/.bin", process.env.PATH]
-  })
-});
-```
-
-If you specify an array as a value of an environment variable as shown above, all elements are joined into a string, sperated with a path delimiter (':' on Unix, ';' on Windows).
-
-In additon to this, `env()` also does one more important task automatically for you. Because environment variable names are case insensitive on Windows, having multiple variables that are only different in case causes a problem. For example, simply cloning `process.env` and setting `PATH` will create a new key `PATH` in additon to an existing key `Path` on Windows because `Path` is the default key name on Windows. `env()` prevents this issue by removing matching keys regardless of case before setting a new value on Windows.
+In most cases, you will not need to use this function directly. Using `options.env` would be sufficient. See `options.env` and `options.rawEnv` for more details.
 
 # Options
 
@@ -242,6 +230,28 @@ If truthy, 'stderr' of the child process captured as a string in `res.stderr`. Y
 
 If truthy, the end of line characters in a captured string are normalized to `"\n"`. Only used when capturing to a string is enabled (by `options.captureOutput` and/or `options.captureError`).
 
+### options.env
+
+An object containing key-value pairs of environment variables, in addition to the default `process.env`. Each `env` object in context chain is merged together to form a combined object and that object is given to `shell.env()` function to construct a final raw object, combined with `process.env` for Node's underlying API.
+
+```js
+var shell = require("pshell");
+
+shell("tape **/*.js", {
+  env: {
+    PATH: ["node_modules/.bin", process.env.PATH]
+  }
+});
+```
+
+This example effectively inserts `"node_modules/.bin"` at the beginning of `PATH` while passing down other values of `process.env` intact to the child process. If you specify an array as a value of an environment variable, all elements are joined into a string, separated with a path delimiter (':' on Unix, ';' on Windows).
+
+Also, `options.env` does one more important job automatically for you. Because environment variable names are case insensitive on Windows, having multiple variables that are only different in case causes a problem. For example, simply cloning `process.env` and setting `PATH` will create a new key `PATH` in additon to an existing key `Path` on Windows because `Path` is the default key name. `options.env` prevents this from happening by removing matching keys regardless of case before setting a new value.
+
+### options.rawEnv
+
+If you don't want the automatic features of `env`, you can specify a raw object in `rawEnv`.
+
 ### options.inputContent (default: `null`)
 
 You can specify a string or an instance of `Buffer` to supply the input data to `stdin` of the child process.
@@ -251,7 +261,6 @@ You can specify a string or an instance of `Buffer` to supply the input data to 
 In addition to the proprietary options above, the following options of [`child_process.spawn()`](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options) also work.
 
 - cwd
-- env
 - arg0
 - stdio (if specified, `inputContent`, `captureOutput` and `captureError` options are ignored)
 - detached

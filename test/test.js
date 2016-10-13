@@ -10,6 +10,7 @@ var CAT = "node " + npath.join(__dirname, "fixture/cat.js");
 var ERROR = "node " + npath.join(__dirname, "fixture/error.js");
 var JSONJS = "node " + npath.join(__dirname, "fixture/json.js");
 var ENV = "node " + npath.join(__dirname, "fixture/env.js");
+var ENV2 = "node " + npath.join(__dirname, "fixture/env2.js");
 
 test("basic echo test", function(t) {
   shell("echo test").then(function(res) {
@@ -60,9 +61,9 @@ test("stderr capture", function(t) {
 });
 
 test("error exit rejection", function(t) {
-  shell(ERROR).then(function(res) {
+  shell(ERROR).then(function() {
     t.fail("error exit didn't reject the promise");
-  }, function(err) {
+  }, function() {
     t.pass("error exit rejected the promise");
   }).then(t.end, t.end);
 });
@@ -140,8 +141,8 @@ test("stdio option", function(t) {
   }).then(t.end, t.end);
 });
 
-test("env option", function(t) {
-  shell(ENV, {env: {MY_ENV_VAR: "haha"}, captureOutput: true}).then(function(res) {
+test("rawEnv option", function(t) {
+  shell(ENV, {rawEnv: {MY_ENV_VAR: "haha"}, captureOutput: true}).then(function(res) {
     t.equal(res.stdout, "haha\n");
   }).then(t.end, t.end);
 });
@@ -181,9 +182,28 @@ test("echoCommand handler", function(t) {
 });
 
 test("shell.env", function(t) {
+  var count = Object.keys(process.env).length;
+
+  if (process.env.PATH === undefined)
+    count++;
+
   var env = shell.env({
     PATH: ["MY_TEST_PATH", process.env.PATH]
   });
+
+  t.ok(count > 1);
+  t.equal(Object.keys(env).length, count);
   t.equal(env.PATH.split(npath.delimiter)[0], "MY_TEST_PATH");
+
   t.end();
+});
+
+test("env option", function(t) {
+  var sh = shell.context({
+    env: {MY_ENV_VAR1: "hello", MY_ENV_VAR2: "hi"}
+  });
+
+  sh(ENV2, {env: {MY_ENV_VAR2: "foo", MY_ENV_VAR3: "bar"}, captureOutput: true}).then(function(res) {
+    t.equal(res.stdout, "hello\nfoo\nbar\n");
+  }).then(t.end, t.end);
 });
