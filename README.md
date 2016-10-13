@@ -179,6 +179,24 @@ Same as `shell()` but returns an object `{childProcess, promise}` instead of a p
 
 Calling `shell(cmd, opts)` is same as calling `shell.exec(cmd, opts).promise`.
 
+### shell.env(def)
+
+Gets an object containing environment variables from `process.env` plus `def`. This can be used to create the `options.env` object in platform independent way.
+
+```js
+var shell = require("pshell");
+
+shell("tape **/*.js", {
+  env: shell.env({
+    PATH: ["node_modules/.bin", process.env.PATH]
+  })
+});
+```
+
+If you specify an array as a value of an environment variable as shown above, all elements are joined into a string, sperated with a path delimiter (':' on Unix, ';' on Windows).
+
+In additon to this, `env()` also does one more important task automatically for you. Because environment variable names are case insensitive on Windows, having multiple variables that are only different in case causes a problem. For example, simply cloning `process.env` and setting `PATH` will create a new key `PATH` in additon to an existing key `Path` on Windows because `Path` is the default key name on Windows. `env()` prevents this issue by removing matching keys regardless of case before setting a new value on Windows.
+
 # Options
 
 ### options.Promise (default: `null`)
