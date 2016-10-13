@@ -232,7 +232,7 @@ If truthy, the end of line characters in a captured string are normalized to `"\
 
 ### options.env
 
-An object containing key-value pairs of environment variables, in addition to the default `process.env`. Each `env` object in context chain is merged together to form a combined object and that object is given to `shell.env()` function to construct a final raw object, combined with `process.env` for Node's underlying API.
+An object containing key-value pairs of environment variables to set, in addition to the default `process.env`. Each `env` object in context chain is merged together to form a combined object and that object is given to `shell.env()` function to construct a final raw object, combined with `process.env` for Node's underlying API.
 
 ```js
 var shell = require("pshell");
@@ -250,7 +250,7 @@ Also, `options.env` does one more important job automatically for you. Because e
 
 ### options.rawEnv
 
-If you don't want the automatic features of `env`, you can specify a raw object in `rawEnv`.
+If you don't want the automatic features of `env`, you can specify a raw object in `options.rawEnv`. If `options.rawEnv` is specified, `options.env` is ignored and `options.rawEnv` is given to the child process as an entire set of environment variables.
 
 ### options.inputContent (default: `null`)
 
